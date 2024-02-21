@@ -27,9 +27,6 @@ namespace VegaJuego
             caja.BackgroundImage = global::VegaJuego.Properties.Resources.derecha;
 
             vegaZelda.Controls.Add(caja); caja.Visible = true;
-
-
-
         }
 
         public String Direccion
@@ -66,7 +63,6 @@ namespace VegaJuego
 
         public void mover()
         {
-
         }
     }
 }

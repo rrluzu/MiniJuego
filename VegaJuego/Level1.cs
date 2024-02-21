@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Media;
 using System.Xml.Serialization;
 
 namespace VegaJuego
@@ -7,12 +8,28 @@ namespace VegaJuego
     {
         Link Player;
         Broncas Enemigo1;
-        public Level1()
+        SoundPlayer musica;
+        Boolean HaySonido = false;
+
+        public Level1(CheckBox onOff)
         {
             InitializeComponent();
             IniciarPersonajes();
+            IniciarOpcionesDelMapa(onOff);
         }
-
+        private void IniciarOpcionesDelMapa(CheckBox onOff)
+        {
+            if (onOff.Checked == true)
+            {
+                musica = new SoundPlayer(global::VegaJuego.Properties.Resources.sonido);
+                musica.PlayLooping();
+                HaySonido = true;
+            }
+            
+            labelVida.Text = "Salud->" + Player.Salud;
+            labelEscudo.Text = "Escudo->" + Player.Escudo;
+            labelArma.Text = "Arma->" + Player.Arma;
+        }
         private void IniciarPersonajes()
         {
             //Lienzo, coordenaX, coordenaY, salud, escudo y arma
@@ -27,14 +44,35 @@ namespace VegaJuego
 
         }
 
-        private void Level1_Load(object sender, EventArgs e)
+        private void MovEnemigos_Tick(object sender, EventArgs e)
         {
+            labelVida.Text = "Salud->" + Player.Salud;
+            labelEscudo.Text = "Escudo->" + Player.Escudo;
+            labelArma.Text = "Arma->" + Player.Arma;
 
+            if (Player.Caja.Bounds.IntersectsWith(Enemigo1.Caja.Bounds))
+            {
+                Player.Salud = Player.Salud - 1;
+            }
+            Enemigo1.mover();
+
+            if (Player.Salud <= 0)
+            {
+                this.Hide();
+                if (HaySonido == true)
+                {
+                    musica.Stop();
+                }
+                Final End = new Final();
+                //Paramos el temporizador
+                MovEnemigos.Stop();
+                End.Show();
+            }
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Level1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Enemigo1.mover();
+            Application.Exit();
         }
     }
 }
